@@ -1,0 +1,100 @@
+
+Dataset Link: https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw/data
+
+https://www.kaggle.com/datasets/ka66ledata/project-management-risk-raw/data
+
+Work Flow:
+=================
+1. Import the packages
+
+2. Load the dataset
+	- Load ERP project management risk dataset (project_risk_raw_dataset.csv)
+	- Drop identifier and non-model columns: Project_ID, Tech_Environment_Stability
+
+3. Data Analysis
+	- Check missing values, duplicate rows, and data types
+	- Report original target distribution (Critical, High, Medium, Low)
+	- Visualize target class distribution
+	- Summarize numerical features (describe)
+	- Plot numerical feature correlation heatmap
+	- Build missing-value summary table (dataset has no missing values)
+
+4. Preprocessing
+	- Map four risk labels to binary target: Medium/Low → 0, Critical/High → 1
+	- Separate Numerical columns (25 features)
+	- Separate Categorical columns (23 features)
+	- Encode categorical feature columns using OrdinalEncoder (handle_unknown=use_encoded_value, unknown_value=-1)
+	- Use full project risk feature set (48 model input columns)
+
+5. Train-Test Split
+	- Split data into training and test folds (80% / 20%, stratified on target)
+	- random_state=42 for reproducible experiments
+
+6. Data Balancing
+	- Apply SMOTENC on the training split only (categorical feature indices preserved)
+	- Balance the skewed binary risk class distribution before model training
+	- Visualize balanced training class distribution
+
+7. Evaluation Function
+	- Define evaluate_model() for Accuracy, Macro Precision, Macro Recall, Macro F1-Score
+	- Generate Classification Report per model
+	- Plot Confusion Matrix heatmap for each classifier
+
+8. Model Training (With Full dataset)
+	- Train individual ML models with predefined hyperparameters on SMOTENC-balanced training data
+	- Evaluate each model immediately using evaluate_model()
+	- Train individual classical ML models:
+		- Base Models
+			- CatBoost Classifier
+			- LightGBM
+			- XGBoost
+			- Extra Trees
+			- Random Forest
+			- Decision Tree
+			- K-Nearest Neighbors (KNN) with StandardScaler on balanced training features
+
+	
+
+9. Model Comparison
+	- Compare ML model performance metrics numerically (Accuracy, Precision, Recall, F1)
+	- Plot and compare bar charts for Accuracy, Precision, Recall, and F1 across all models
+
+10. Train and Save the Best Performing Model
+	- Save CatBoost as the best performing model (~89.2% test accuracy)
+	- Save deployment artifacts: catboost_model.joblib, categorical_encoder.joblib, categorical_columns.joblib, feature_columns.joblib
+	- Reload saved CatBoost model for downstream XAI sections
+
+11. Explainable AI (XAI) — LIME
+	- Apply LIME (Local Interpretable Model-agnostic Explanations) on saved CatBoost model
+	- Build LimeTabularExplainer using SMOTENC-balanced training background
+	- Explain a selected test instance (top contributing features)
+
+12. Explainable AI (XAI) — SHAP
+	- Apply SHAP (SHapley Additive exPlanations) TreeExplainer on saved CatBoost model
+	- Sample test rows and plot SHAP summary (global feature impact, max_display=15)
+
+13. Explainable AI (XAI) — Top Risk Factors
+	- Rank CatBoost feature importance on full feature set
+	- Display top 15 risk-driving project attributes
+
+
+
+Frontend:
+=================
+1. Frontend is developed with help of FastAPI Framework, along with Registration and Login setup with support of SQLite DB 
+
+2. Input Prediction Flow
+	- User uploads an Excel (.xlsx/.xls/.xlsm) or CSV project file on the home page (drag-and-drop or file picker)
+	- Submit file asynchronously via POST /api/predict using FormData (static/app.js)
+	- Preprocess and align inputs using saved OrdinalEncoder mapping and feature column order from models/
+	- Run batch risk prediction using the saved CatBoost model in main.py
+	- Generate per-row classification (Low / Medium vs High / Critical) and confidence percentage
+	- Store upload session token and prediction payload in sessionStorage; redirect to results.html
+	- On row selection, call POST /api/explain/{row_index} to generate LIME factor weights for that project row
+	- Render prediction table, probability bars, and LIME explanation panel on the results dashboard
+
+3. Graphs & Notebook Analytics
+	- User opens Graphs (/graphs) to review exported notebook analytics images (correlation, SMOTENC balance, metric comparisons, confusion matrix, SHAP summary)
+	- User opens static/notebook.html to review the full notebook export (training workflow, model comparison, LIME, SHAP)
+	- Interactive graph cards support zoom, reset, and fullscreen modal inspection in the UI
+

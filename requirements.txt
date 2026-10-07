@@ -1,0 +1,42 @@
+# anaconda version: 2023.03-1 (python version: 3.10.9)
+
+# anaconda application link: https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Windows-x86_64.exe
+
+# Note: install packages one by one to avoid conflict error 
+ 
+
+joblib==1.4.2
+seaborn==0.13.2
+requests==2.32.4
+shap==0.46.0
+lime==0.2.0.1
+lightgbm==4.5.0
+xgboost==2.1.2
+catboost==1.2.7
+jinja2==3.1.2
+scipy==1.10.1
+itsdangerous==2.0.1
+imbalanced-learn==0.10.1
+urllib3==2.5.0
+plotly==5.9.0
+fastapi==0.115.4
+uvicorn==0.32.0
+typing_extensions==4.15.0
+pydantic==2.12.5
+starlette==0.41.2
+Werkzeug==2.2.2
+MarkupSafe==2.1.1
+qstylizer==0.2.2
+symengine==0.13.0
+protobuf==3.20.3
+scikit-learn==1.0.2
+numpy==1.24.3
+pandas==1.5.3
+matplotlib==3.7.0
+
+
+
+####If Jupyter Notebook is not working then install this packages
+
+#pip install --upgrade jupyterhub
+#pip install --upgrade --user nbconvert
